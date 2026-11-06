@@ -1,0 +1,31 @@
+{
+  "name": "barrot",
+  "version": "1.0.0",
+  "description": "Barrot: a community Discord bot (fork of MemberMessenger)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/main.ts",
+    "dev": "node --env-file-if-exists=.env --watch src/main.ts",
+    "typecheck": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "discord.js": "^14.28.1",
+    "kysely": "^0.29.8",
+    "pino": "^10.4.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.6.6",
+    "pino-pretty": "^13.2.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

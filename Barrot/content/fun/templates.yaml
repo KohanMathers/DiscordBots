@@ -1,0 +1,6 @@
+id: templates
+locale: en-GB
+kind: templates
+templates:
+  intro: Some say {fact1}, and {fact2}... all we know is, they're called {name}!
+  tonight: Tonight... {slot1}, {slot2}, and {slot3}.

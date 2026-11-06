@@ -1,0 +1,23 @@
+# Links shown by /links, in order. Edit freely; no code changes needed.
+title: 🔗 Links
+links:
+  - label: My amazing site
+    url: https://kmathers.co.uk
+  - label: Read my blog :D
+    url: https://kmathers.co.uk/blog
+  - label: Hannah's amazing portfolio
+    url: https://hannahstewart.co.uk
+  - label: Install TwitchAnnouncer
+    url: https://discord.com/oauth2/authorize?client_id=1307780537972166747
+  - label: Install StrikeSystem
+    url: https://discord.com/oauth2/authorize?client_id=1409667296582045859
+  - label: Install MemberMessenger
+    url: https://discord.com/oauth2/authorize?client_id=1377995351931486288
+  - label: Download Pronouns
+    url: https://www.spigotmc.org/resources/pronouns.123867
+  - label: Download PlaceholderNametags
+    url: https://www.spigotmc.org/resources/placeholdernametags.125083
+  - label: Download Quill
+    url: https://github.com/kohanmathers/quill
+  - label: Download InvView
+    url: https://www.spigotmc.org/resources/invview.129244

@@ -1,0 +1,42 @@
+import type { Client } from 'discord.js';
+import type { Kysely } from 'kysely';
+import type { Logger } from 'pino';
+import type { Config } from '../app/config.ts';
+import type { Clock } from '../core/clock.ts';
+import type { FunContent } from '../core/content.ts';
+import type { Metrics } from '../core/metrics.ts';
+import type { CommandSpec, Module } from '../modules/types.ts';
+import type { AuditService } from '../services/audit.ts';
+import type { AutoResponseService } from '../services/autoresponses.ts';
+import type { GuildService } from '../services/guilds.ts';
+import type { JobQueue } from '../services/jobs.ts';
+import type { JoinIndex } from '../services/joinIndex.ts';
+import type { LockService } from '../services/locks.ts';
+import type { ScheduleService } from '../services/schedule.ts';
+import type { SettingsService } from '../services/settings.ts';
+import type { Database } from '../storage/schema.ts';
+
+export interface BotContext {
+  client: Client;
+  config: Config;
+  log: Logger;
+  metrics: Metrics;
+  clock: Clock;
+  db: Kysely<Database>;
+  settings: SettingsService;
+  guilds: GuildService;
+  audit: AuditService;
+  jobs: JobQueue;
+  joinIndex: JoinIndex;
+  locks: LockService;
+  schedule: ScheduleService;
+  autoresponses: AutoResponseService;
+  content: FunContent;
+  modules: Module[];
+  version: string;
+  startedAt: Date;
+  kickWorker(): void;
+  isModuleEnabled(guildId: string, moduleId: string): Promise<boolean>;
+  commandList(): Array<{ spec: CommandSpec; module: Module }>;
+  supportUrl(): string | undefined;
+}

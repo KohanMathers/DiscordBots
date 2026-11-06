@@ -1,0 +1,124 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2026-11-06T00:13:56+00:00",
+    "name": "pnpm Discord Bot",
+    "author": "kohanmathersmcgonnell@gmail.com",
+    "description": "Runs a Node.js Discord bot managed with pnpm, from a git repository or uploaded files. Works with monorepos: set App Directory to the bot's folder. Put the bot's secrets in a .env file in that folder. Dependencies are installed on every start, inside the runtime image, so native modules always match its Node version.",
+    "features": null,
+    "docker_images": {
+        "Node.js 26": "ghcr.io/parkervcp/yolks:nodejs_26",
+        "Node.js 25": "ghcr.io/parkervcp/yolks:nodejs_25",
+        "Node.js 24": "ghcr.io/parkervcp/yolks:nodejs_24"
+    },
+    "file_denylist": [],
+    "startup": "bash /home/container/.ptero/start.sh",
+    "config": {
+        "files": "{}",
+        "startup": "{\"done\":[\"connected to Discord\"]}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\nset -e\nexport DEBIAN_FRONTEND=noninteractive\napt-get update -qq\napt-get install -y -qq git ca-certificates > /dev/null\n\nmkdir -p /mnt/server\ncd /mnt/server\n\nif [[ -n \"${GIT_ADDRESS}\" ]]; then\n  REPO=\"${GIT_ADDRESS}\"\n  if [[ -n \"${USERNAME}\" && -n \"${ACCESS_TOKEN}\" && \"${REPO}\" == https://* ]]; then\n    REPO=\"https://${USERNAME}:${ACCESS_TOKEN}@${REPO#https://}\"\n  fi\n  if [[ -d .git ]]; then\n    echo \"[egg] repository already present, pulling\"\n    git config --global --add safe.directory /mnt/server\n    git pull --ff-only\n  elif [[ -z \"$(ls -A | grep -vx '.ptero')\" ]]; then\n    echo \"[egg] cloning ${GIT_ADDRESS}\"\n    if [[ -n \"${BRANCH}\" ]]; then\n      git clone --single-branch --branch \"${BRANCH}\" \"${REPO}\" .\n    else\n      git clone \"${REPO}\" .\n    fi\n  else\n    echo \"[egg] server folder is not empty and not a git repository; skipping clone\"\n  fi\nelse\n  echo \"[egg] no repository set; upload the files with the file manager or SFTP\"\nfi\n\necho \"[egg] installing pnpm ${PNPM_VERSION}\"\nrm -rf .ptero/pnpm\nmkdir -p .ptero/pnpm\nnpm install --silent --no-audit --no-fund --prefix .ptero/pnpm \"pnpm@${PNPM_VERSION:-12}\"\n\ncat > .ptero/start.sh <<'START'\n#!/bin/bash\n# Written by the pnpm bot egg installer. Reinstall the server to update it.\nset -e\ncd /home/container\nPNPM=/home/container/.ptero/pnpm/node_modules/.bin/pnpm\n\nif [[ \"${AUTO_UPDATE}\" == \"1\" && -d .git ]]; then\n  echo \"[egg] pulling latest changes\"\n  git pull --ff-only || echo \"[egg] git pull failed; starting the version already here\"\nfi\n\nAPP=\"/home/container/${APP_DIR:-.}\"\nif [[ ! -f \"${APP}/package.json\" ]]; then\n  echo \"[egg] no package.json in ${APP}; check the App Directory variable\"\n  exit 1\nfi\ncd \"${APP}\"\n\nif [[ \"${INSTALL_ON_START}\" == \"1\" ]]; then\n  \"${PNPM}\" install --frozen-lockfile\nfi\n\nexport HTTP_PORT=\"${HTTP_PORT:-${SERVER_PORT}}\"\nexec \"${PNPM}\" run \"${START_SCRIPT:-start}\"\nSTART\nchmod +x .ptero/start.sh\necho \"[egg] install finished\"\n",
+            "container": "node:24-bookworm-slim",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Git Repository",
+            "description": "Repository to clone on install (https URL). Leave empty to upload files yourself.",
+            "env_variable": "GIT_ADDRESS",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:512",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Branch",
+            "description": "Branch to clone. Empty = the repository's default branch.",
+            "env_variable": "BRANCH",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Username",
+            "description": "Only for private repositories.",
+            "env_variable": "USERNAME",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Git Access Token",
+            "description": "Personal access token for private repositories. Stored in .git/config.",
+            "env_variable": "ACCESS_TOKEN",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": true,
+            "rules": "nullable|string|max:256",
+            "field_type": "text"
+        },
+        {
+            "name": "App Directory",
+            "description": "Folder holding the bot's package.json, relative to the repository root (e.g. TwitchAnnouncer). Empty = root.",
+            "env_variable": "APP_DIR",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:128|regex:/^[A-Za-z0-9._\\/-]*$/",
+            "field_type": "text"
+        },
+        {
+            "name": "Start Script",
+            "description": "The package.json script to run.",
+            "env_variable": "START_SCRIPT",
+            "default_value": "start",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64|regex:/^[A-Za-z0-9:._-]+$/",
+            "field_type": "text"
+        },
+        {
+            "name": "Auto Update",
+            "description": "Pull the latest commit on every start (1 = on, 0 = off).",
+            "env_variable": "AUTO_UPDATE",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Install On Start",
+            "description": "Run pnpm install --frozen-lockfile on every start (1 = on, 0 = off).",
+            "env_variable": "INSTALL_ON_START",
+            "default_value": "1",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "pnpm Version",
+            "description": "pnpm version or range to install. Reinstall the server after changing it.",
+            "env_variable": "PNPM_VERSION",
+            "default_value": "12",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:32|regex:/^[A-Za-z0-9.^~-]+$/",
+            "field_type": "text"
+        }
+    ]
+}
