@@ -13,7 +13,7 @@ Barrot is a fork of the MemberMessenger base. This file records how it differs, 
 
 ## Base version this fork tracks
 
-- MemberMessenger base: 3.0.3
+- MemberMessenger base: 3.0.4
 
 ## Changes from the base
 

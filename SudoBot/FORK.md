@@ -16,7 +16,7 @@ This file records how it differs, so fixes to the base can be re-applied here me
 
 ## Base version this fork tracks
 
-- MemberMessenger base: 3.0.3 (base changes: BASE-CHANGELOG.md)
+- MemberMessenger base: 3.0.4 (base changes: BASE-CHANGELOG.md)
 
 ## Changes from the base
 

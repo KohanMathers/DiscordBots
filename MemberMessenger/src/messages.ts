@@ -29,6 +29,7 @@ export const MESSAGES = {
   'help.footer': 'Use /help to display a list of commands.',
   'fun.intro': "Some say {fact1}, and {fact2}... all we know is, they're called {name}!",
   'fun.tonight': 'Tonight... {slot1}, {slot2}, and {slot3}.',
+  'fun.membertonight': 'Tonight... {slot1}, {slot2}, and {slot3}.',
   'error.serverOnly': 'This command only works in a server.',
   'error.internal': "Something went wrong on my end. Try again, and if it keeps happening tell the bot's support server",
 } as const;

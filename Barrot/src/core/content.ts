@@ -5,7 +5,8 @@ import { parse } from 'yaml';
 export interface FunContent {
   facts: string[];
   slots: [string[], string[], string[]];
-  templates: { intro?: string; tonight?: string };
+  memberTonight: string[];
+  templates: { intro?: string; tonight?: string; membertonight?: string };
 }
 
 interface PackFile {
@@ -19,7 +20,7 @@ interface PackFile {
 
 export function loadFunContent(dir: string): FunContent {
   const folder = join(dir, 'fun');
-  const out: FunContent = { facts: [], slots: [[], [], []], templates: {} };
+  const out: FunContent = { facts: [], slots: [[], [], []], memberTonight: [], templates: {} };
   for (const file of readdirSync(folder).filter((f) => f.endsWith('.yaml') || f.endsWith('.yml')).sort()) {
     const doc = parse(readFileSync(join(folder, file), 'utf8')) as PackFile;
     if (!doc?.kind) throw new Error(`${file}: missing "kind"`);
@@ -27,8 +28,9 @@ export function loadFunContent(dir: string): FunContent {
     if (doc.kind === 'facts') out.facts.push(...entries);
     else if (doc.kind === 'intros') {
       const slot = Number(doc.slot);
-      if (![1, 2, 3].includes(slot)) throw new Error(`${file}: intros need slot 1, 2 or 3`);
-      out.slots[slot - 1]!.push(...entries);
+      if (![1, 2, 3, 4].includes(slot)) throw new Error(`${file}: intros need slot 1, 2, 3 or 4`);
+      if (slot === 4) out.memberTonight.push(...entries);
+      else out.slots[slot - 1]!.push(...entries);
     } else if (doc.kind === 'templates') Object.assign(out.templates, doc.templates ?? {});
   }
   return out;
@@ -47,4 +49,8 @@ export function pickTwoFacts(facts: string[], rng: Rng = Math.random): [string, 
 
 export function pickTonight(slots: FunContent['slots'], rng: Rng = Math.random): [string, string, string] {
   return [pick(slots[0], rng), pick(slots[1], rng), pick(slots[2], rng)];
+}
+
+export function pickMemberTonight(pool: string[], rng: Rng = Math.random): [string, string, string] {
+  return [pick(pool, rng), pick(pool, rng), pick(pool, rng)];
 }

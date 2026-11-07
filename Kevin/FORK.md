@@ -13,7 +13,7 @@ This file records how this bot differs from the MemberMessenger base, so fixes t
 
 ## Base version this fork tracks
 
-- MemberMessenger base: 3.0.3 (see CHANGELOG.md)
+- MemberMessenger base: 3.0.4 (see CHANGELOG.md)
 
 ## Changes from the base
 

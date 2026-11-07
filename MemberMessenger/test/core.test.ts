@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadFunContent, pickTwoFacts } from '../src/core/content.ts';
+import { loadFunContent, pickMemberTonight, pickTwoFacts } from '../src/core/content.ts';
 import { planDeletes } from '../src/core/purge.ts';
 import { analyseMentions, checkRegex, matches, mentionPolicyFor, renderTemplate } from '../src/core/text.ts';
 import { localToUtc, nextLocal, parseWhen, resolveZone, upcomingRuns, utcToLocal } from '../src/core/time.ts';
@@ -109,12 +109,20 @@ describe('content packs', () => {
     expect(c.slots.map((s) => s.length)).toEqual([55, 49, 55]);
     expect(c.templates.intro).toBe(MESSAGES['fun.intro']);
   });
+  it('loads the membertonight pool, each entry carrying a {1} placeholder', () => {
+    expect(c.memberTonight).toHaveLength(159);
+    expect(c.memberTonight.every((e) => e.includes('{1}'))).toBe(true);
+  });
   it('always picks two different facts', () => {
     for (let n = 0; n < 500; n++) {
       const [a, b] = pickTwoFacts(c.facts);
       expect(a).not.toBe(b);
     }
     expect(pickTwoFacts(['x', 'y'], () => 0.99)).toEqual(['y', 'x']);
+  });
+  it('picks three membertonight entries independently, without deduping', () => {
+    expect(pickMemberTonight(['a', 'b'], () => 0)).toEqual(['a', 'a', 'a']);
+    expect(pickMemberTonight(['a', 'b'], () => 0.99)).toEqual(['b', 'b', 'b']);
   });
 });
 
@@ -141,5 +149,6 @@ describe('parity strings', () => {
     ['perm.need', { perm: 'Manage Messages', action: 'lock this channel' }, 'You need the Manage Messages permission to lock this channel.'],
     ['fun.intro', { fact1: 'a', fact2: 'b', name: 'Kai' }, "Some say a, and b... all we know is, they're called Kai!"],
     ['fun.tonight', { slot1: 'J', slot2: 'M', slot3: 'R' }, 'Tonight... J, M, and R.'],
+    ['fun.membertonight', { slot1: 'J', slot2: 'M', slot3: 'R' }, 'Tonight... J, M, and R.'],
   ] as const)('%s', (key, vars, expected) => expect(t(key, vars)).toBe(expected));
 });

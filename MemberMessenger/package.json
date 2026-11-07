@@ -1,6 +1,6 @@
 {
   "name": "member-messenger",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Community Discord bot: member and server info, channel locks, purge, auto-responses, scheduled messages and fun",
   "private": true,
   "type": "module",

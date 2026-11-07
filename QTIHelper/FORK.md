@@ -15,7 +15,7 @@ QTIHelper is a fork of the MemberMessenger base. This file records how it differ
 
 ## Base version this fork tracks
 
-- MemberMessenger base: 3.0.3 (base changes: BASE-CHANGELOG.md)
+- MemberMessenger base: 3.0.4 (base changes: BASE-CHANGELOG.md)
 
 ## Changes from the base
 
